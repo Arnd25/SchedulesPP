@@ -1,5 +1,4 @@
 "use client"
-import { cn } from "@/shared/lib/utils";
 import { useLoginForm } from "@/modules/auth/hooks/use-login-form";
 import { Button } from "@/components/ui/button";
 
@@ -7,7 +6,7 @@ interface Props {
     className?: string;
 }
 
-export const LoginForm: React.FC<Props> = ({ className }) => {
+export const LoginForm= () => {
     const { onSubmit, form, isPending } = useLoginForm();
     const { errors } = form.formState;
     return (

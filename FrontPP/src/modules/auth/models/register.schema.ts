@@ -13,7 +13,6 @@ export const registerSchema = z.object({
         .max(12, "Максимальная длина пароля 12 символов"),
     passwordConfirm: z.string().min(1, 'Подтвердите пароль').optional(), // Добавили .optional()
 }).refine((data) => {
-    // Проверяем только если passwordConfirm существует
     if (data.passwordConfirm && data.password !== data.passwordConfirm) {
         return {
             message: 'Пароли не совпадают',

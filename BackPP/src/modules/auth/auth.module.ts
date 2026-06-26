@@ -7,7 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { PrismaModule } from '../prisma/prisma.module';
 import { MulterModule } from '@nestjs/platform-express';
-import { MulterConfigService } from 'src/common/config/multer.config';
+import { MulterConfigService } from '../../common/config/multer.config';
 
 @Module({
   imports: [

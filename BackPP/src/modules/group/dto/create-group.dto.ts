@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Department, Shift } from "src/generated/prisma/client";
+import { Department, Shift } from "../../../generated/prisma/client";
 import { IsEnum, IsNotEmpty, IsString } from "class-validator";
 
 export class CreateGroupDto {

@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { GroupService } from './group.service';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
-import { IdParamDto } from 'src/common/dto/id-param.dto';
+import { IdParamDto } from '../../common/dto/id-param.dto';
 
 @Controller('group')
 export class GroupController {

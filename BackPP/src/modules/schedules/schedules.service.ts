@@ -2,7 +2,7 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import { CreateScheduleDto } from './dto/create-schedule.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { FilterScheduleDto } from './dto/filter-schedule.dto';
-import { Prisma } from 'src/generated/prisma/client';
+import { Prisma } from '../../generated/prisma/client';
 import { GenerateScheduleDto } from './dto/generate-schedule.dto';
 
 @Injectable()

@@ -7,7 +7,7 @@ import { PrismaService } from "../prisma/prisma.service";
 import { RegisterDto } from "./dto/register.dto";
 import { getFileUrl } from "../../common/utils/url.util";
 import { LoginDto } from "./dto/login.dto";
-import { TokenPair } from 'src/common/types/shared.type';
+import { TokenPair } from '../../common/types/shared.type';
 
 @Injectable()
 export class AuthService {

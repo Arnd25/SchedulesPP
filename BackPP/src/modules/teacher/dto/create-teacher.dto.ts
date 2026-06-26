@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsString, IsArray, IsEnum, IsOptional } from "class-validator";
-import { Department } from "src/generated/prisma";
+import { Department } from "../../../generated/prisma";
 
 export class CreateTeacherDto {
     @ApiProperty()

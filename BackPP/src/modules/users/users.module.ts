@@ -4,7 +4,7 @@ import { UsersController } from './users.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { ConfigModule } from '@nestjs/config';
-import { MulterConfigService } from 'src/common/config/multer.config';
+import { MulterConfigService } from '../../common/config/multer.config';
 
 @Module({
   imports: [

@@ -1,9 +1,8 @@
 "use client"
 
-import { ZodSchema } from "zod";
-import {useTransition} from "react";
-import {useForm, UseFormProps} from "react-hook-form";
-import {zodResolver} from "@hookform/resolvers/zod";
+import { useTransition } from "react";
+import { useForm, UseFormProps, FieldValues, Resolver } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 type ActionResult = {
     error?: string;
@@ -11,16 +10,22 @@ type ActionResult = {
     ok?: boolean;
 };
 
-interface UseServerFormOptions<TForm, TPayload> {
-    schema: ZodSchema<TForm>;
+interface UseServerFormOptions<TForm extends FieldValues, TPayload = TForm> {
+    schema: any; // Используем any вместо ZodSchema
     defaultValues: UseFormProps<TForm>["defaultValues"];
     action: (payload: TPayload) => Promise<ActionResult>;
     mapData?: (data: TForm) => TPayload;
     onSuccess?: () => void;
 }
 
-export function useServerForm<TForm, TPayload = TForm>({ schema, defaultValues, action, mapData, onSuccess }: UseServerFormOptions<TForm, TPayload>) {
-    const [ isPending, startTransition ] = useTransition();
+export function useServerForm<TForm extends FieldValues, TPayload = TForm>({
+    schema,
+    defaultValues,
+    action,
+    mapData,
+    onSuccess
+}: UseServerFormOptions<TForm, TPayload>) {
+    const [isPending, startTransition] = useTransition();
 
     const form = useForm<TForm>({
         resolver: zodResolver(schema),
@@ -36,11 +41,11 @@ export function useServerForm<TForm, TPayload = TForm>({ schema, defaultValues, 
             if (result?.fieldErrors) {
                 Object.entries(result.fieldErrors).forEach(([field, messages]) => {
                     form.setError(field as any, {
-                       message: messages?.[0],
+                        message: messages?.[0],
                     });
                 });
-
             }
+
             if (result?.error) {
                 form.setError("root", { message: result.error });
             }

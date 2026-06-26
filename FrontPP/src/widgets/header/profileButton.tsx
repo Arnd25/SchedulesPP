@@ -22,16 +22,12 @@ interface ProfileMenuProps {
 export const ProfileMenu = ({ user }: ProfileMenuProps) => {
     const [open, setOpen] = useState(false);
     const [showEditForm, setShowEditForm] = useState(false);
-    const [imageError, setImageError] = useState(false);
 
     const handleProfileEdit = () => {
         setOpen(false);
         setShowEditForm(true);
     };
 
-    // Проверяем, есть ли валидный avatar URL
-    const hasValidAvatar = user.avatar && !imageError;
-    const avatarSrc = hasValidAvatar ? user.avatar : process.env.NEXT_PUBLIC_IMAGE_PLACEHOLDER!
     return (
         <>
             <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -65,6 +61,7 @@ export const ProfileMenu = ({ user }: ProfileMenuProps) => {
             </DropdownMenu>
 
             <ProfileEditForm
+                key={`edit-form-${showEditForm}-${user.id}`}
                 isOpen={showEditForm}
                 onClose={() => setShowEditForm(false)}
                 user={user}

@@ -1,0 +1,129 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  password     String
+  firstName    String   @map("first_name")
+  lastName     String   @map("last_name")
+  avatar       String?
+  refreshToken String?  @map("refresh_token")
+  role         Role     @default(USER)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model Group {
+  id         String     @id @default(uuid())
+  name       String     @unique
+  department Department
+  shift      Shift
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  pairs      Pair[]
+  schedules  Schedule[]
+
+  @@map("groups")
+}
+
+model Teacher {
+  id          String              @id @default(uuid())
+  name        String              @unique
+  department  Department
+  createdAt   DateTime            @default(now()) @map("created_at")
+  updatedAt   DateTime            @updatedAt @map("updated_at")
+  pairs       Pair[]
+  disciplines TeacherDiscipline[]
+
+  @@map("teachers")
+}
+
+model Discipline {
+  id        String              @id @default(uuid())
+  name      String              @unique
+  createdAt DateTime            @default(now()) @map("created_at")
+  updatedAt DateTime            @updatedAt @map("updated_at")
+  pairs     Pair[]
+  teachers  TeacherDiscipline[]
+
+  @@map("disciplines")
+}
+
+model TeacherDiscipline {
+  id           String     @id @default(uuid())
+  teacherId    String
+  disciplineId String
+  isMain       Boolean    @default(false)
+  discipline   Discipline @relation(fields: [disciplineId], references: [id], onDelete: Cascade)
+  teacher      Teacher    @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  @@map("teacher_disciplines")
+}
+
+model Pair {
+  id           String     @id @default(uuid())
+  teacherId    String
+  disciplineId String
+  audience     String
+  hours        Int
+  groupId      String
+  remaingHours Int
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  discipline   Discipline @relation(fields: [disciplineId], references: [id], onDelete: Cascade)
+  group        Group      @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  teacher      Teacher    @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  schedules    Schedule[]
+
+  @@unique([teacherId, disciplineId, groupId])
+  @@map("pairs")
+}
+
+model Schedule {
+  id           String   @id @default(uuid())
+  pairId       String
+  groupId      String
+  date         DateTime
+  lessonNumber Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  pair  Pair  @relation(fields: [pairId], references: [id], onDelete: Cascade)
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([pairId, date, lessonNumber])
+  @@unique([groupId, date, lessonNumber])
+  @@map("schedules")
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum Department {
+  Финансы
+  Автоматизация
+  Транспорт
+  Землеустройство
+}
+
+enum Shift {
+  ПЕРВАЯ
+  ВТОРАЯ
+}

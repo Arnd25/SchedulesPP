@@ -1,5 +1,3 @@
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { api } from '@/config/http/server.http'
 import { API_ROUTES } from '@/shared/routes/api.route'
 import UserList from './UserList'

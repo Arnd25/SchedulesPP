@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { SearchIcon } from '@/components/icons/searchIcon';
 
 interface Props {
-    pairs: Pair[]
+    pairs: Pair[] | undefined
 }
 
 function PairList({ pairs }: Props) {

@@ -1,7 +1,7 @@
 // app/pair/page.tsx
 
-import Pair from "@/modules/pair/PairPage";
+import PairPage from "@/modules/pair/PairPage";
 
 export default async function Page() {
-  return <Pair />
+  return <PairPage />
 }

@@ -11,7 +11,7 @@ export function Auth() {
 
     return (
         <div className="bg-card mt-60 px-12 py-7 flex flex-col gap-2.5 w-120 rounded-[10px] transition-all duration-500">
-            <Tabs onValueChange={setSelectedTab} defaultValue="login" className="transition-all duration-300 ease-in-out opacity-100">
+            <Tabs onValueChange={setSelectedTab} defaultValue="login" className="transition-all flex flex-col duration-300 ease-in-out opacity-100">
 
                 <TabsList className="flex w-full h-fit!  bg-transparent gap-13">
                     <TabsTrigger

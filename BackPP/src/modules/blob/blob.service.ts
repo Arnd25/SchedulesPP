@@ -8,19 +8,29 @@ export class BlobService {
     /**
      * Загрузить файл в Vercel Blob
      */
+    // blob.service.ts
     async uploadFile(file: Express.Multer.File, folder = 'photos'): Promise<string> {
         const ext = extname(file.originalname).toLowerCase();
         const filename = `${folder}/${uuidv4()}${ext}`;
 
+        console.log('📤 Загружаю файл:', filename);
+
         const blob = await put(filename, file.buffer, {
-            access: 'public',
+            access: 'public',  // ✅ Это правильно
             contentType: file.mimetype,
             addRandomSuffix: false,
+            // ❌ УБРАТЬ: allowDownload: true - такого свойства нет!
         });
 
-        return blob.url; // Прямая публичная ссылка
-    }
+        console.log('✅ Файл загружен:', blob.url);
+        console.log('📋 Метаданные:', {
+            pathname: blob.pathname,
+            url: blob.url,
+        });
 
+        // Возвращаем URL
+        return blob.url;
+    }
     /**
      * Удалить файл из Vercel Blob
      */

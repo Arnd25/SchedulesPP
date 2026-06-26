@@ -5,9 +5,8 @@ import { Request, Response } from 'express';
 import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
-import { RequestWithUser, TokenPair } from '../../common/types/shared.type';
-import { IMAGE_VALIDATION } from 'src/common/constants/index.constant';
-import { UsersService } from '../users/users.service';
+import { TokenPair } from '../../common/types/shared.type';
+import { IMAGE_VALIDATION } from '../../common/constants/index.constant';
 import { ConfigService } from '@nestjs/config';
 
 @Controller('auth')

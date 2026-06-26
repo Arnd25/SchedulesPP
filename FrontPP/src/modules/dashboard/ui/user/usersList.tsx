@@ -23,7 +23,7 @@ export const UsersList = async () => {
             <div className="overflow-hidden">
                 <ul className="flex flex-col gap-2.5 overflow-y-auto h-full sidebar-scroll">
                     {data.map((item: User) => (
-                        <li key={item.id} className="p-5 bg-card flex gap-2.5 items-center rounded-lg text-xl font-semibold shrink-0">
+                        <li key={item.id} className="p-2 bg-card flex gap-2.5 items-center rounded-lg text-xl font-semibold shrink-0">
                             <UserCard data={item} />
                         </li>
                     ))}

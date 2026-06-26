@@ -6,12 +6,11 @@ import { AppRole } from '../../common/types/shared.type';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { FilterUserDto } from './dto/filter-user.dto';
 import { ApiBody, ApiConsumes, ApiOperation } from '@nestjs/swagger';
-import { IMAGE_VALIDATION } from 'src/common/constants/index.constant';
+import { IMAGE_VALIDATION } from '../../common/constants/index.constant';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { IdParamDto } from 'src/common/dto/id-param.dto';
-import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import { IdParamDto } from '../../common/dto/id-param.dto';
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('users')

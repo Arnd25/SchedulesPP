@@ -4,10 +4,9 @@ import { ConfigService } from "@nestjs/config";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { hashString } from "../../common/utils/hash.util";
 import { getFileUrl } from "../../common/utils/url.util";
-import { FilterUserDto } from "./dto/filter-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { deleteFileFromDisk } from "../../common/utils/delete-file.util";
-import { Prisma } from 'src/generated/prisma/client';
+import { Prisma } from '../../generated/prisma/client';
 
 @Injectable()
 export class UsersService {

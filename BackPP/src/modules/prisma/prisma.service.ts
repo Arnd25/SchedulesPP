@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 
 import { PrismaNeon } from '@prisma/adapter-neon'
-import { PrismaClient } from "src/generated/prisma/client";
+import { PrismaClient } from "../../generated/prisma";
 
 @Injectable()
 export class PrismaService extends PrismaClient {

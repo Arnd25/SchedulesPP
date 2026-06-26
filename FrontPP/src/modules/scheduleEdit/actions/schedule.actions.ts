@@ -5,13 +5,13 @@ import { API_ROUTES } from '@/shared/routes/api.route'
 import { APP_ROUTES } from '@/shared/routes/app.route'
 import { revalidatePath } from 'next/cache'
 
-export interface CreateScheduleRequest {
+export interface CreateScheduleRequest extends Record<string, unknown> {
     pairId: string
     date: string
     lessonNumber: number
 }
 
-export interface GenerateScheduleRequest {
+export interface GenerateScheduleRequest extends Record<string, unknown> {
     groupId: string
     date: string
 }
@@ -33,7 +33,6 @@ export async function createScheduleAction(
 ): Promise<{ success: boolean; error?: string }> {
     const response = await api.post(API_ROUTES.schedules.CREATE(), data)
 
-
     if (response.error) {
         return { success: false, error: response.error }
     }
@@ -47,7 +46,6 @@ export async function deleteScheduleAction(
 ): Promise<{ success: boolean; error?: string }> {
     const response = await api.delete(API_ROUTES.schedules.DELETE(id))
 
-
     if (response.error) {
         return { success: false, error: response.error }
     }
@@ -60,7 +58,6 @@ export async function generateScheduleAction(
     data: GenerateScheduleRequest
 ) {
     const response = await api.post(API_ROUTES.schedules.GENERATE(), data)
-
 
     if (response.error) {
         return {
@@ -86,7 +83,6 @@ export async function deleteDayScheduleAction(
     date: string
 ) {
     const response = await api.delete(API_ROUTES.schedules.DELETE_DAY(groupId, date))
-
 
     if (response.error) {
         return {

@@ -5,10 +5,16 @@ import { API_ROUTES } from '@/shared/routes/api.route';
 import { APP_ROUTES } from '@/shared/routes/app.route';
 import { revalidatePath } from 'next/cache';
 
-export async function createGroup(prevState: any, formData: FormData) {
+type GroupActionState = {
+  error?: string;
+  success?: boolean;
+  message?: string;
+} | null;
+
+export async function createGroup(prevState: GroupActionState, formData: FormData) {
   const name = formData.get('group') as string;
   const shift = formData.get('Shift') as string;
-  const department = formData.get('Department')
+  const department = formData.get('Department');
 
   if (!name || name.trim() === '') {
     return { error: 'Введите название группы' };
@@ -22,7 +28,7 @@ export async function createGroup(prevState: any, formData: FormData) {
     revalidatePath(APP_ROUTES.group());
 
     return { success: true, message: 'Дисциплина добавлена' };
-  } catch (error) {
+  } catch {
     return { error: 'Ошибка при создании дисциплины' };
   }
 }

@@ -5,7 +5,7 @@ import { api } from "@/config/http/server.http";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-interface ActionConfig<T> {
+interface ActionConfig<T extends Record<string, unknown>> {
     schema: z.ZodSchema<T>;
     endpoint: string;
     revalidate?: string;
@@ -13,8 +13,8 @@ interface ActionConfig<T> {
     isMultipart?: boolean;
 }
 
-export async function serviceAction<T>(config: ActionConfig<T>, data: any) {
-    let rawData: any;
+export async function serviceAction<T extends Record<string, unknown>>(config: ActionConfig<T>, data: unknown) {
+    let rawData: Record<string, unknown>;
 
     if (data instanceof FormData) {
         rawData = Object.fromEntries(data.entries());
@@ -23,7 +23,7 @@ export async function serviceAction<T>(config: ActionConfig<T>, data: any) {
             rawData.image = data.get("image");
         }
     } else {
-        rawData = data;
+        rawData = data as Record<string, unknown>;
     }
 
     const validated = config.schema.safeParse(rawData);
@@ -32,13 +32,13 @@ export async function serviceAction<T>(config: ActionConfig<T>, data: any) {
         return { fieldErrors: validated.error.flatten().fieldErrors as Record<string, string[]> };
     }
 
-    let payload: any;
+    let payload: Record<string, unknown> | FormData;
     if (config.isMultipart) {
         const fData = new FormData();
 
-        Object.entries(validated.data as any).forEach(([key, value]) => {
+        Object.entries(validated.data).forEach(([key, value]) => {
             if (value !== undefined && value !== null && value !== "" && key !== "image") {
-                fData.append(key, typeof value === "boolean" ? String(value) : (value as any));
+                fData.append(key, typeof value === "boolean" ? String(value) : String(value));
             }
         });
 

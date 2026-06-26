@@ -5,7 +5,13 @@ import { API_ROUTES } from '@/shared/routes/api.route';
 import { APP_ROUTES } from '@/shared/routes/app.route';
 import { revalidatePath } from 'next/cache';
 
-export async function createPair(prevState: any, formData: FormData) {
+type PairActionState = {
+  error?: string;
+  success?: boolean;
+  message?: string;
+} | null;
+
+export async function createPair(prevState: PairActionState, formData: FormData) {
   const disciplineId = formData.get('DisciplineId') as string;
   const groupId = formData.get('groupId') as string;
   const teacherId = formData.get('TeacherId') as string;
@@ -47,15 +53,15 @@ export async function createPair(prevState: any, formData: FormData) {
 
 
   if (response.error) {
-    return { 
-      error: response.error 
+    return {
+      error: response.error
     };
   }
 
   revalidatePath(APP_ROUTES.pair());
 
-  return { 
-    success: true, 
-    message: 'Пара добавлена' 
+  return {
+    success: true,
+    message: 'Пара добавлена'
   };
 }

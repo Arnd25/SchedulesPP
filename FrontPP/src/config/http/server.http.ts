@@ -6,8 +6,8 @@ type HttpMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE';
 interface RequestOptions {
     method: HttpMethod;
     endpoint: string;
-    body?: any;
-};
+    body?: Record<string, unknown> | FormData;
+}
 
 export async function httpConfig<T>(options: RequestOptions) {
     const { method, endpoint, body } = options;
@@ -57,14 +57,14 @@ export async function httpConfig<T>(options: RequestOptions) {
         }
 
         return { data: result as T, error: null, status: response.status };
-    } catch (error) {
+    } catch (_error) {
         return { data: null, error: "Ошибка соединения", status: 500 };
     }
 }
 
 export const api = {
     get: <T>(endpoint: string) => httpConfig<T>({ method: 'GET', endpoint }),
-    post: <T>(endpoint: string, body: any) => httpConfig<T>({ method: 'POST', endpoint, body }),
-    patch: <T>(endpoint: string, body: any) => httpConfig<T>({ method: 'PATCH', endpoint, body }),
+    post: <T>(endpoint: string, body: Record<string, unknown> | FormData) => httpConfig<T>({ method: 'POST', endpoint, body }),  // ✅ Заменено any
+    patch: <T>(endpoint: string, body: Record<string, unknown> | FormData) => httpConfig<T>({ method: 'PATCH', endpoint, body }),  // ✅ Заменено any
     delete: <T>(endpoint: string) => httpConfig<T>({ method: "DELETE", endpoint }),
 };

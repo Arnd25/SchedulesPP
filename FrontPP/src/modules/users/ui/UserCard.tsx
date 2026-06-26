@@ -35,6 +35,7 @@ function UserCard({ user }: data) {
             </div>
 
             <UserDeleteForm
+                key={`delete-${showDeleteConfirm}-${user.id}`}
                 isOpen={showDeleteConfirm}
                 onClose={() => setShowDeleteConfirm(false)}
                 userId={user.id}
@@ -42,6 +43,7 @@ function UserCard({ user }: data) {
                 userLastName={user.lastName}
             />
             <UserEditForm
+                key={`delete-${showFormEdit}-${user.id}`}
                 isOpen={showFormEdit}
                 onClose={() => setShowFormEdit(false)}
                 user={user}

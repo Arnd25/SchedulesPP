@@ -27,10 +27,6 @@ export function AddScheduleModal({
     const [search, setSearch] = useState('')
 
     useEffect(() => {
-        if (isOpen) setSearch('')
-    }, [isOpen])
-
-    useEffect(() => {
         const handleEscape = (e: KeyboardEvent) => {
             if (e.key === 'Escape') onClose()
         }
@@ -75,7 +71,7 @@ export function AddScheduleModal({
                         <FiX className="w-5 h-5 text-gray-900" />
                     </Button>
                 </div>
-                {/* поиск */}
+
                 <div className="p-4 border-b border-primary">
                     <div className="relative bg-white rounded-lg">
                         <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -108,7 +104,7 @@ export function AddScheduleModal({
                                         {pair.discipline.name}
                                     </div>
                                     <div className="flex flex-col text-sm text-gray-800">
-                                        <p className=''>{pair.teacher.name}</p>
+                                        <p>{pair.teacher.name}</p>
                                         <p>Аудитория: {pair.audience}</p>
                                     </div>
                                 </button>

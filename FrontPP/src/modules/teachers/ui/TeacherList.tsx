@@ -22,7 +22,6 @@ export default function TeacherList({ teachers, disciplines }: Props) {
         )
     }) || []
 
-    const hasNoDisciplines = !disciplines || disciplines.length === 0
     const hasNoTeachers = !teachers || teachers.length === 0
     const hasNoResults = filteredTeachers.length === 0
 

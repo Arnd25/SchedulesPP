@@ -16,20 +16,24 @@ interface Props {
 }
 
 export function Notification({ state, duration = 4000 }: Props) {
-    const [isVisible, setIsVisible] = useState(false);
-
+    const [isDismissed, setIsDismissed] = useState(false);
 
     useEffect(() => {
-        if (state && (state.message || state.error)) {
-            setIsVisible(true);
+        setIsDismissed(false);
+    }, [state]);
 
+    const hasContent = state && (state.message || state.error);
+    const isVisible = Boolean(hasContent) && !isDismissed;
+
+    useEffect(() => {
+        if (isVisible) {
             const timer = setTimeout(() => {
-                setIsVisible(false);
+                setIsDismissed(true);
             }, duration);
 
             return () => clearTimeout(timer);
         }
-    }, [state, duration]);
+    }, [isVisible, duration]);
 
     if (!state) return null;
 
@@ -55,8 +59,7 @@ export function Notification({ state, duration = 4000 }: Props) {
                     animate={{ opacity: 1, y: 0, x: 0 }}
                     exit={{ opacity: 0, y: -10, x: 20 }}
                     transition={{ duration: 0.3 }}
-                    className={`fixed top-3 right-3 z-50 mt-2.5 p-4 rounded-lg border shadow-lg max-w-md ${styles}`}
-                >
+                    className={`fixed top-3 right-3 z-50 mt-2.5 p-4 rounded-lg border shadow-lg max-w-md ${styles}`}>
                     <div className="flex items-start gap-3">
                         {isSuccess ? (
                             <FiCheckCircle className="w-5 h-5 shrink-0 mt-0.5" />
@@ -67,7 +70,7 @@ export function Notification({ state, duration = 4000 }: Props) {
                         <span className="text-sm flex-1">{text}</span>
 
                         <button
-                            onClick={() => setIsVisible(false)}
+                            onClick={() => setIsDismissed(true)}
                             className="p-1 hover:bg-black/5 rounded shrink-0"
                             aria-label="Закрыть"
                         >

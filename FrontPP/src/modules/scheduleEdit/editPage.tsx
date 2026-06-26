@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState, useEffect, useRef } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { GroupCards } from './ui/groupCard'
 import { CalendarSection } from './ui/calendarSection'
 import { ScheduleList } from './ui/scheduleList'
@@ -30,47 +30,48 @@ interface StoredData {
     timestamp: number
 }
 
-export default function EditPage({ groups = [], schedules = [], pairs = [] }: Props) {
-    const [isMounted, setIsMounted] = useState(false)
-    const calendarRef = useRef<HTMLDivElement>(null)
+function getStoredState(): StoredData | null {
+    if (typeof window === 'undefined') return null
 
-    const [selectedDate, setSelectedDate] = useState<Date>(() => {
-        const now = new Date()
-        return new Date(now.getFullYear(), now.getMonth(), now.getDate())
-    })
-
-    const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null)
-
-    useEffect(() => {
-        setIsMounted(true)
-
+    try {
         const stored = localStorage.getItem('schedule_state')
+        if (!stored) return null
 
-        if (stored) {
-            try {
-                const data: StoredData = JSON.parse(stored)
-                const now = Date.now()
-                const age = now - data.timestamp
+        const data: StoredData = JSON.parse(stored)
+        const age = Date.now() - data.timestamp
 
-                if (age < STORAGE_TTL) {
-                    if (data.groupId) {
-                        setSelectedGroupId(data.groupId)
-                    }
-
-                    if (data.year && data.month !== undefined && data.day) {
-                        setSelectedDate(new Date(data.year, data.month, data.day))
-                    }
-                } else {
-                    localStorage.removeItem('schedule_state')
-                }
-            } catch (e) {
-                localStorage.removeItem('schedule_state')
-            }
+        if (age < STORAGE_TTL) {
+            return data
+        } else {
+            localStorage.removeItem('schedule_state')
+            return null
         }
-    }, [])
+    } catch {
+        localStorage.removeItem('schedule_state')
+        return null
+    }
+}
+
+function getInitialDate(): Date {
+    const stored = getStoredState()
+    if (stored && stored.year && stored.month !== undefined && stored.day) {
+        return new Date(stored.year, stored.month, stored.day)
+    }
+    const now = new Date()
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate())
+}
+
+function getInitialGroupId(): string | null {
+    const stored = getStoredState()
+    return stored?.groupId ?? null
+}
+
+export default function EditPage({ groups = [], schedules = [], pairs = [] }: Props) {
+    const [selectedDate, setSelectedDate] = useState<Date>(getInitialDate)
+    const [selectedGroupId, setSelectedGroupId] = useState<string | null>(getInitialGroupId)
 
     useEffect(() => {
-        if (!isMounted) return
+        if (typeof window === 'undefined') return
 
         const data: StoredData = {
             groupId: selectedGroupId,
@@ -81,7 +82,7 @@ export default function EditPage({ groups = [], schedules = [], pairs = [] }: Pr
         }
 
         localStorage.setItem('schedule_state', JSON.stringify(data))
-    }, [selectedGroupId, selectedDate, isMounted])
+    }, [selectedGroupId, selectedDate])
 
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [selectedSlot, setSelectedSlot] = useState<{
@@ -90,43 +91,9 @@ export default function EditPage({ groups = [], schedules = [], pairs = [] }: Pr
     } | null>(null)
     const [isCreating, setIsCreating] = useState(false)
     const [isGenerating, setIsGenerating] = useState(false)
-    const [error, setError] = useState<string | null>(null)
-    const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
     const handleGroupSelect = (groupId: string) => {
         setSelectedGroupId(groupId)
-        setError(null)
-        setSuccessMessage(null)
-    }
-
-    const handleTodayClick = () => {
-        const now = new Date()
-        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-
-        setSelectedDate(today)
-
-        setTimeout(() => {
-            if (calendarRef.current) {
-                const todayElement = calendarRef.current.querySelector('[data-today="true"]')
-
-                if (todayElement) {
-                    todayElement.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'center',
-                        inline: 'center',
-                    })
-
-                    todayElement.classList.add('ring-4', 'ring-blue-500', 'rounded-full')
-                    setTimeout(() => {
-                        todayElement.classList.remove('ring-4', 'ring-blue-500', 'rounded-full')
-                    }, 2000)
-                }
-            }
-        }, 100)
-    }
-
-    const handleDateChange = (date: Date) => {
-        setSelectedDate(date)
     }
 
     const currentDateStr = useMemo(() => {
@@ -162,11 +129,9 @@ export default function EditPage({ groups = [], schedules = [], pairs = [] }: Pr
 
     const handleAddClick = (lessonNumber: number, time: string) => {
         if (!selectedGroupId) {
-            setError('Сначала выберите группу')
             return
         }
         setSelectedSlot({ lessonNumber, time })
-        setError(null)
         setIsModalOpen(true)
     }
 
@@ -177,14 +142,12 @@ export default function EditPage({ groups = [], schedules = [], pairs = [] }: Pr
         if (result.success) {
             window.location.reload()
         } else {
-            setError(result.error || 'Ошибка при удалении')
         }
     }
 
     const handlePairSelect = async (pairId: string) => {
         if (!selectedSlot) return
         setIsCreating(true)
-        setError(null)
 
         try {
             const result = await createScheduleAction({
@@ -198,10 +161,8 @@ export default function EditPage({ groups = [], schedules = [], pairs = [] }: Pr
                 setSelectedSlot(null)
                 window.location.reload()
             } else {
-                setError(result.error || 'Ошибка при создании')
             }
-        } catch (err: any) {
-            setError('Ошибка при создании расписания')
+        } catch {
         } finally {
             setIsCreating(false)
         }
@@ -209,13 +170,10 @@ export default function EditPage({ groups = [], schedules = [], pairs = [] }: Pr
 
     const handleGenerate = async () => {
         if (!selectedGroupId) {
-            setError('Сначала выберите группу')
             return
         }
 
         setIsGenerating(true)
-        setError(null)
-        setSuccessMessage(null)
 
         try {
             const result = await generateScheduleAction({
@@ -224,13 +182,10 @@ export default function EditPage({ groups = [], schedules = [], pairs = [] }: Pr
             })
 
             if (result.success) {
-                setSuccessMessage(`✅ ${result.message || `Создано ${result.count} пар`}`)
                 setTimeout(() => window.location.reload(), 1000)
             } else {
-                setError(result.error || 'Ошибка при генерации')
             }
-        } catch (err: any) {
-            setError('Ошибка при генерации расписания')
+        } catch {
         } finally {
             setIsGenerating(false)
         }
@@ -238,26 +193,21 @@ export default function EditPage({ groups = [], schedules = [], pairs = [] }: Pr
 
     const handleDeleteDay = async () => {
         if (!selectedGroupId) {
-            setError('Сначала выберите группу')
             return
         }
 
         if (!confirm('Удалить ВСЁ расписание на этот день?')) return
 
         setIsGenerating(true)
-        setError(null)
 
         try {
             const result = await deleteDayScheduleAction(selectedGroupId, currentDateStr)
 
             if (result.success) {
-                setSuccessMessage(`✅ ${result.message || `Удалено ${result.count} пар`}`)
                 setTimeout(() => window.location.reload(), 1000)
             } else {
-                setError(result.error || 'Ошибка при удалении')
             }
-        } catch (err: any) {
-            setError('Ошибка при удалении расписания дня')
+        } catch {
         } finally {
             setIsGenerating(false)
         }
@@ -294,6 +244,7 @@ export default function EditPage({ groups = [], schedules = [], pairs = [] }: Pr
             </div>
 
             <AddScheduleModal
+                key={`schedule-modal-${isModalOpen}`}
                 isOpen={isModalOpen}
                 onClose={() => {
                     setIsModalOpen(false)

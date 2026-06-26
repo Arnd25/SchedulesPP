@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useTransition, useRef } from 'react';
+import { useState, useTransition, useRef } from 'react';
 import { X, Pencil } from 'lucide-react';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -17,28 +17,15 @@ interface UserEditFormProps {
 export function UserEditForm({ isOpen, onClose, user }: UserEditFormProps) {
   const router = useRouter();
   const [isUpdating, startUpdateTransition] = useTransition();
-  const [editFirstName, setEditFirstName] = useState('');
-  const [editLastName, setEditLastName] = useState('');
-  const [editEmail, setEditEmail] = useState('');
-  const [editRole, setEditRole] = useState('');
-  const [previewAvatar, setPreviewAvatar] = useState('');
+
+  const [editFirstName, setEditFirstName] = useState(user.firstName || '');
+  const [editLastName, setEditLastName] = useState(user.lastName || '');
+  const [editEmail, setEditEmail] = useState(user.email || '');
+  const [editRole, setEditRole] = useState(user.role || '');
+  const [previewAvatar, setPreviewAvatar] = useState(user.avatar || '');
   const [newAvatarFile, setNewAvatarFile] = useState<File | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState('');
-
-  useEffect(() => {
-    if (isOpen) {
-      setEditFirstName(user.firstName || '');
-      setEditLastName(user.lastName || '');
-      setEditEmail(user.email || '');
-      setEditRole(user.role || '');
-      setPreviewAvatar(user.avatar || '');
-      setNewAvatarFile(null);
-      if (fileInputRef.current) fileInputRef.current.value = '';
-      setError('');
-    }
-  }, [isOpen, user]);
-
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (!isOpen) return null;
 
@@ -56,7 +43,7 @@ export function UserEditForm({ isOpen, onClose, user }: UserEditFormProps) {
 
   const handleRemoveAvatar = () => {
     setNewAvatarFile(null);
-    setPreviewAvatar(user.avatar);
+    setPreviewAvatar(user.avatar || '');
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
@@ -91,9 +78,7 @@ export function UserEditForm({ isOpen, onClose, user }: UserEditFormProps) {
         avatar: newAvatarFile,
       };
 
-
       const result = await UpdateUser(userData);
-
 
       if (result.success) {
         handleClose();
@@ -167,9 +152,7 @@ export function UserEditForm({ isOpen, onClose, user }: UserEditFormProps) {
             <input
               type="text"
               value={editFirstName}
-              onChange={(e) => {
-                setEditFirstName(e.target.value);
-              }}
+              onChange={(e) => setEditFirstName(e.target.value)}
               placeholder="Имя..."
               className="bg-white w-full rounded-md p-2.5 h-10 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
             />
@@ -181,9 +164,7 @@ export function UserEditForm({ isOpen, onClose, user }: UserEditFormProps) {
             <input
               type="text"
               value={editLastName}
-              onChange={(e) => {
-                setEditLastName(e.target.value);
-              }}
+              onChange={(e) => setEditLastName(e.target.value)}
               placeholder="Фамилия..."
               className="bg-white w-full rounded-md p-2.5 h-10 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
             />
@@ -195,9 +176,7 @@ export function UserEditForm({ isOpen, onClose, user }: UserEditFormProps) {
             <input
               type="email"
               value={editEmail}
-              onChange={(e) => {
-                setEditEmail(e.target.value);
-              }}
+              onChange={(e) => setEditEmail(e.target.value)}
               placeholder="Email..."
               className="bg-white w-full rounded-md p-2.5 h-10 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
             />
@@ -209,9 +188,7 @@ export function UserEditForm({ isOpen, onClose, user }: UserEditFormProps) {
             <input
               type="text"
               value={editRole}
-              onChange={(e) => {
-                setEditRole(e.target.value);
-              }}
+              onChange={(e) => setEditRole(e.target.value)}
               placeholder="Роль..."
               className="bg-white w-full rounded-md p-2.5 h-10 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
             />

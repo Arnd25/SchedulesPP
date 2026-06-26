@@ -1,26 +1,27 @@
 "use client"
 
-import { cn } from "@/shared/lib/utils";
+import { FC } from "react";
 import { useRegisterForm } from "@/modules/auth/hooks/use-register-form";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/shared/lib/utils";
 
 interface Props {
     className?: string;
-};
+}
 
-export const RegisterForm: React.FC<Props> = ({ className }) => {
+export const RegisterForm: FC<Props> = ({ className }) => {
     const { form, isPending, onSubmit } = useRegisterForm();
     const { errors } = form.formState;
     return (
-        <form onSubmit={onSubmit} className="grid gap-y-2.5" aria-label="Тело формы">
+        <form onSubmit={onSubmit} className={cn("grid gap-y-2.5", className)} aria-label="Тело формы">
             <div aria-label="Поле формы" className="grid gap-y-1.5">
-                <label htmlFor="name" className="text-xl">Введите имя</label>
-                <input {...form.register('firstName')} id="name" type="text" className="px-3 py-2.5 border border-border rounded-lg bg-white" placeholder="Иванов Николай" />
+                <label htmlFor="firstName" className="text-xl">Введите имя</label>
+                <input {...form.register('firstName')} id="firstName" type="text" className="px-3 py-2.5 border border-border rounded-lg bg-white" placeholder="Иванов Николай" />
                 {errors.firstName && <p className="text-sm text-red-500">{errors.firstName.message}</p>}
             </div>
             <div aria-label="Поле формы" className="grid gap-y-1.5">
-                <label htmlFor="name" className="text-xl">Введите имя</label>
-                <input {...form.register('lastName')} id="name" type="text" className="px-3 py-2.5 border border-border rounded-lg bg-white" placeholder="Иванов Николай" />
+                <label htmlFor="lastName" className="text-xl">Введите фамилию</label>
+                <input {...form.register('lastName')} id="lastName" type="text" className="px-3 py-2.5 border border-border rounded-lg bg-white" placeholder="Иванов Николай" />
                 {errors.lastName && <p className="text-sm text-red-500">{errors.lastName.message}</p>}
             </div>
             <div aria-label="Поле формы" className="grid gap-y-1.5">

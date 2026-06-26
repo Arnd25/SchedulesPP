@@ -1,7 +1,7 @@
 "use client"
 
 import { useTransition } from "react";
-import { useForm, UseFormProps, FieldValues, Resolver } from "react-hook-form";
+import { useForm, UseFormProps, FieldValues, Path } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 type ActionResult = {
@@ -11,7 +11,7 @@ type ActionResult = {
 };
 
 interface UseServerFormOptions<TForm extends FieldValues, TPayload = TForm> {
-    schema: any; // Используем any вместо ZodSchema
+    schema: any;
     defaultValues: UseFormProps<TForm>["defaultValues"];
     action: (payload: TPayload) => Promise<ActionResult>;
     mapData?: (data: TForm) => TPayload;
@@ -40,14 +40,14 @@ export function useServerForm<TForm extends FieldValues, TPayload = TForm>({
 
             if (result?.fieldErrors) {
                 Object.entries(result.fieldErrors).forEach(([field, messages]) => {
-                    form.setError(field as any, {
+                    form.setError(field as Path<TForm>, {
                         message: messages?.[0],
                     });
                 });
             }
 
             if (result?.error) {
-                form.setError("root", { message: result.error });
+                form.setError("root" as any, { message: result.error });
             }
 
             if (result?.ok) {

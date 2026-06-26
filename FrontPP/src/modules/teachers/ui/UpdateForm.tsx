@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useTransition } from 'react';
+import { useState, useTransition } from 'react';
 import { X } from 'lucide-react';
 import {
     Select,
@@ -30,6 +30,7 @@ export function TeacherEditModal({
 }: TeacherEditFormProps) {
     const router = useRouter();
     const [isUpdating, startUpdateTransition] = useTransition();
+
     const [editName, setEditName] = useState(teacher.name);
     const [editDepartment, setEditDepartment] = useState<string>(teacher.department);
     const [editMainDisciplines, setEditMainDisciplines] = useState<string[]>(
@@ -40,19 +41,6 @@ export function TeacherEditModal({
     );
     const [mainDisciplineInput, setMainDisciplineInput] = useState('');
     const [additionalDisciplineInput, setAdditionalDisciplineInput] = useState('');
-    const [error, setError] = useState('');
-
-    useEffect(() => {
-        if (isOpen) {
-            setEditName(teacher.name);
-            setEditDepartment(teacher.department);
-            setEditMainDisciplines(teacher.mainDisciplines.map((d) => d.id));
-            setEditAdditionalDisciplines(teacher.additionalDisciplines.map((d) => d.id));
-            setMainDisciplineInput('');
-            setAdditionalDisciplineInput('');
-            setError('');
-        }
-    }, [isOpen, teacher]);
 
     if (!isOpen) return null;
 
@@ -92,20 +80,16 @@ export function TeacherEditModal({
     const handleClose = () => {
         setMainDisciplineInput('');
         setAdditionalDisciplineInput('');
-        setError('');
         onClose();
     };
 
     const handleUpdate = () => {
-        setError('');
 
         if (!editName.trim()) {
-            setError('Введите ФИО преподавателя');
             return;
         }
 
         if (!editDepartment) {
-            setError('Выберите кафедру');
             return;
         }
 
@@ -122,7 +106,6 @@ export function TeacherEditModal({
                 handleClose();
                 router.refresh();
             } else {
-                setError(result.message || 'Произошла ошибка');
             }
         });
     };
@@ -195,7 +178,8 @@ export function TeacherEditModal({
                             <Button
                                 type="button"
                                 onClick={handleAddMainDiscipline}
-                                className="h-10 px-4"   >
+                                className="h-10 px-4"
+                            >
                                 Добавить
                             </Button>
                         </div>
@@ -205,9 +189,13 @@ export function TeacherEditModal({
                                 return disc ? (
                                     <div
                                         key={discId}
-                                        className="inline-flex items-center gap-1 bg-card text-primary px-3 py-1 rounded-md">
+                                        className="inline-flex items-center gap-1 bg-card text-primary px-3 py-1 rounded-md"
+                                    >
                                         {disc.name}
-                                        <button type="button" onClick={() => handleRemoveMainDiscipline(discId)}>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleRemoveMainDiscipline(discId)}
+                                        >
                                             <X className="w-4 h-4" />
                                         </button>
                                     </div>
@@ -221,7 +209,10 @@ export function TeacherEditModal({
                             Дополнительные дисциплины
                         </label>
                         <div className="flex gap-2 mb-2">
-                            <Select value={additionalDisciplineInput} onValueChange={setAdditionalDisciplineInput}>
+                            <Select
+                                value={additionalDisciplineInput}
+                                onValueChange={setAdditionalDisciplineInput}
+                            >
                                 <SelectTrigger className="bg-white w-full h-10!">
                                     <SelectValue placeholder="Дисциплина..." />
                                 </SelectTrigger>
@@ -250,7 +241,10 @@ export function TeacherEditModal({
                                         className="inline-flex items-center gap-1 bg-card text-primary px-3 py-1 rounded-md"
                                     >
                                         {disc.name}
-                                        <button type="button" onClick={() => handleRemoveAdditionalDiscipline(discId)}>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleRemoveAdditionalDiscipline(discId)}
+                                        >
                                             <X className="w-4 h-4" />
                                         </button>
                                     </span>
@@ -258,18 +252,21 @@ export function TeacherEditModal({
                             })}
                         </div>
                     </div>
+
                     <div className="flex gap-2">
                         <Button
                             onClick={handleUpdate}
                             disabled={isUpdating}
-                            className="flex-1 bg-primary hover:bg-primary/90 text-white py-5 rounded-md font-medium disabled:opacity-50">
+                            className="flex-1 bg-primary hover:bg-primary/90 text-white py-5 rounded-md font-medium disabled:opacity-50"
+                        >
                             {isUpdating ? 'Сохранение...' : 'Сохранить'}
                         </Button>
                         <Button
                             onClick={handleClose}
                             variant="outline"
                             className="flex-1 py-5 hover:bg-gray-200"
-                            disabled={isUpdating}>
+                            disabled={isUpdating}
+                        >
                             Отмена
                         </Button>
                     </div>

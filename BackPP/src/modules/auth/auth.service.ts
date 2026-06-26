@@ -5,7 +5,6 @@ import { JwtService } from "@nestjs/jwt";
 import { hashString, verifyString } from "../../common/utils/hash.util";
 import { PrismaService } from "../prisma/prisma.service";
 import { RegisterDto } from "./dto/register.dto";
-import { getFileUrl } from "../../common/utils/url.util";
 import { LoginDto } from "./dto/login.dto";
 import { TokenPair } from '../../common/types/shared.type';
 
@@ -27,8 +26,8 @@ export class AuthService {
         password: await hashString(dto.password),
         firstName: dto.firstName,
         lastName: dto.lastName,
-        avatar: file?.filename || null,
         role: Role.USER,
+        avatar: file ? file.filename : null,
       },
     });
 
@@ -80,7 +79,6 @@ export class AuthService {
       firstName: user.firstName,
       lastName: user.lastName,
       role: user.role,
-      avatar: getFileUrl(user.avatar, this.configService),
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     };

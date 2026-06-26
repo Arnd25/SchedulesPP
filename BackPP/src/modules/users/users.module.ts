@@ -5,6 +5,7 @@ import { PrismaModule } from '../prisma/prisma.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { ConfigModule } from '@nestjs/config';
 import { MulterConfigService } from '../../common/config/multer.config';
+import { BlobModule } from '../blob/blob.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { MulterConfigService } from '../../common/config/multer.config';
       imports: [ConfigModule],
       useClass: MulterConfigService,
     }),
+    BlobModule,
     PrismaModule],
   controllers: [UsersController],
   providers: [UsersService],

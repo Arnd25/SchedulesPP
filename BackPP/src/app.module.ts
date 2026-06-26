@@ -10,6 +10,7 @@ import { GroupModule } from './modules/group/group.module';
 import { TeacherModule } from './modules/teacher/teacher.module';
 import { PairsModule } from './modules/pairs/pairs.module';
 import { SchedulesModule } from './modules/schedules/schedules.module';
+import { BlobModule } from './modules/blob/blob.module';
 import * as path from 'path';
 
 @Module({
@@ -42,6 +43,7 @@ import * as path from 'path';
     TeacherModule,
     PairsModule,
     SchedulesModule,
+    BlobModule,
   ],
   controllers: [],
   providers: [],

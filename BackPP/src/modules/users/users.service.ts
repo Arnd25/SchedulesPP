@@ -1,19 +1,17 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from "../prisma/prisma.service";
-import { ConfigService } from "@nestjs/config";
 import { CreateUserDto } from "./dto/create-user.dto";
-import { hashString } from "../../common/utils/hash.util";
-import { getFileUrl } from "../../common/utils/url.util";
 import { UpdateUserDto } from "./dto/update-user.dto";
-import { deleteFileFromDisk } from "../../common/utils/delete-file.util";
+import { hashString } from "../../common/utils/hash.util";
 import { Prisma } from '../../generated/prisma/client';
+import { BlobService } from '../blob/blob.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly prismaService: PrismaService,
-    private readonly configService: ConfigService,
-  ) { }
+    private readonly blobService: BlobService,
+  ) {}
 
   async findAll() {
     const users = await this.prismaService.user.findMany({
@@ -21,13 +19,13 @@ export class UsersService {
         { role: 'asc' },
         { createdAt: 'asc' }
       ]
-    })
+    });
 
     return users.map((user) => this.sanitizeUser(user));
   }
 
   async findOne(id: string) {
-    const user = await this.prismaService.user.findUnique({ where: { id: id } });
+    const user = await this.prismaService.user.findUnique({ where: { id } });
     if (!user) throw new NotFoundException('Пользователь не найден');
     return this.sanitizeUser(user);
   }
@@ -38,6 +36,12 @@ export class UsersService {
 
     const hashedPassword = await hashString(dto.password);
 
+    // Загружаем файл в Vercel Blob (если есть)
+    let avatarUrl: string | null = null;
+    if (file) {
+      avatarUrl = await this.blobService.uploadFile(file, 'avatars');
+    }
+
     const user = await this.prismaService.user.create({
       data: {
         email: dto.email,
@@ -45,7 +49,7 @@ export class UsersService {
         firstName: dto.firstName,
         lastName: dto.lastName,
         role: dto.role,
-        avatar: file ? file.filename : null,
+        avatar: avatarUrl, // Сохраняем полный URL в БД
       },
     });
 
@@ -53,35 +57,45 @@ export class UsersService {
   }
 
   async update(id: string, dto: UpdateUserDto, file?: Express.Multer.File) {
-    const user = await this.prismaService.user.findUnique({ where: { id: id } });
+    const user = await this.prismaService.user.findUnique({ where: { id } });
     if (!user) throw new NotFoundException('Пользователь не найден');
 
-    if (file && user.avatar) deleteFileFromDisk(user.avatar, this.configService);
+    // Если загружается новый файл — удаляем старый из Blob
+    let avatarUrl: string | undefined = undefined;
+    if (file) {
+      if (user.avatar) {
+        await this.blobService.deleteFile(user.avatar);
+      }
+      avatarUrl = await this.blobService.uploadFile(file, 'avatars');
+    }
 
     const data: Prisma.UserUpdateInput = {
       email: dto.email,
       firstName: dto.firstName,
       lastName: dto.lastName,
       role: dto.role,
-      avatar: file?.filename,
+      avatar: avatarUrl, // Обновляем URL (или undefined, если файл не менялся)
       password: dto.password ? await hashString(dto.password) : undefined,
     };
 
     const updatedUser = await this.prismaService.user.update({
       where: { id: user.id },
-      data: data,
+      data,
     });
 
     return this.sanitizeUser(updatedUser);
   }
 
   async remove(id: string) {
-    const user = await this.prismaService.user.findUnique({ where: { id: id } });
+    const user = await this.prismaService.user.findUnique({ where: { id } });
     if (!user) throw new NotFoundException('Пользователь не найден');
 
-    deleteFileFromDisk(user.avatar, this.configService);
-    return this.prismaService.user.delete({ where: { id: id } });
+    // Удаляем аватар из Blob, если он есть
+    if (user.avatar) {
+      await this.blobService.deleteFile(user.avatar);
+    }
 
+    return this.prismaService.user.delete({ where: { id } });
   }
 
   private sanitizeUser(user: any) {
@@ -91,7 +105,7 @@ export class UsersService {
       firstName: user.firstName,
       lastName: user.lastName,
       role: user.role,
-      avatar: getFileUrl(user.avatar, this.configService),
+      avatar: user.avatar || null, // URL уже полный — просто возвращаем
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     };

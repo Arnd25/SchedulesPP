@@ -1,7 +1,8 @@
-import { Body, Controller, Post, Req, Res, UploadedFile, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Res, UploadedFile, UseGuards, UseInterceptors, ParseFilePipe } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
@@ -14,15 +15,18 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly configService: ConfigService,
-  ) { }
-
+  ) {}
 
   @Post('register')
-  async register(@Body() dto: RegisterDto, @UploadedFile(IMAGE_VALIDATION) file: Express.Multer.File, @Res({ passthrough: true }) res: Response) {
+  @UseInterceptors(FileInterceptor('avatar'))
+  async register(
+    @Body() dto: RegisterDto,
+    @UploadedFile(IMAGE_VALIDATION) file: Express.Multer.File,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const { user, tokens } = await this.authService.register(dto, file);
     this.setCookies(res, tokens);
     return user;
-
   }
 
   @Post('login')
@@ -39,13 +43,6 @@ export class AuthController {
     this.clearCookies(res);
     return { message: 'Успешный выход' };
   }
-
-  // @Post('refresh')
-  // async refresh(@CurrentUser() user: any, @Res({ passthrough: true }) res: Response) {
-  //   const tokens = await this.authService.refresh(user.userId, user.refreshToken);
-  //   this.setCookies(res, tokens);
-  //   return { accessToken: tokens.accessToken };
-  // }
 
   private setCookies(res: Response, tokens: TokenPair) {
     const cookieOptions = {

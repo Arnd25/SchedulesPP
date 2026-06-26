@@ -46,8 +46,6 @@ export function Notification({ state, duration = 4000 }: Props) {
             ? 'bg-red-100 text-red-800 border-red-300'
             : 'bg-gray-100 text-gray-800 border-gray-300';
 
-    console.log('📊 Notification rendering:', { isError, isSuccess, text, styles });
-
     return (
         <AnimatePresence>
             {isVisible && (

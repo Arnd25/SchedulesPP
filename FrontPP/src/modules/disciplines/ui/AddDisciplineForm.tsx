@@ -8,9 +8,6 @@ import { Notification } from '@/components/shared/notification';
 export function AddDisciplineForm() {
     const [state, formAction, isPending] = useActionState(createDiscipline, null);
 
-    // 🔍 Отладка
-    console.log('📝 AddDisciplineForm state:', state);
-
     return (
         <div className="bg-secondary px-5 py-2.5 flex flex-col gap-2.5 rounded-[10px]">
             <p className="text-4xl font-medium">Добавить дисциплину</p>

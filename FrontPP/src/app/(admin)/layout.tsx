@@ -3,6 +3,7 @@ import "../globals.css";
 import { Header } from "@/widgets/header/header";
 import { Sidebar } from "@/widgets/sidebar/sidebar";
 import { requireAdmin } from "@/shared/lib/guards";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 
 export const metadata: Metadata = {
@@ -25,6 +26,7 @@ export default async function RootLayout({ children, }: Readonly<{ children: Rea
             {children}
           </main>
         </div>
+        <SpeedInsights />
       </body>
     </html>
   );

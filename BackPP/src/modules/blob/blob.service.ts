@@ -13,22 +13,13 @@ export class BlobService {
         const ext = extname(file.originalname).toLowerCase();
         const filename = `${folder}/${uuidv4()}${ext}`;
 
-        console.log('📤 Загружаю файл:', filename);
 
         const blob = await put(filename, file.buffer, {
-            access: 'public',  // ✅ Это правильно
+            access: 'public',
             contentType: file.mimetype,
             addRandomSuffix: false,
-            // ❌ УБРАТЬ: allowDownload: true - такого свойства нет!
         });
 
-        console.log('✅ Файл загружен:', blob.url);
-        console.log('📋 Метаданные:', {
-            pathname: blob.pathname,
-            url: blob.url,
-        });
-
-        // Возвращаем URL
         return blob.url;
     }
     /**

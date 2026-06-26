@@ -16,12 +16,12 @@ export function Auth() {
                 <TabsList className="flex w-full h-fit!  bg-transparent gap-13">
                     <TabsTrigger
                         value="login"
-                        className="text-2xl data-[state=active]:border-b-primary! px-1 pb-2 after:hidden flex-none rounded-none  data-[state=active]:bg-transparent h-fit data-[state=active]:shadow-none! data-[state=active]:text-4xl">
+                        className="text-2xl data-[state=active]:border-b-primary! data-[state=active]:text-black px-1 pb-2 after:hidden flex-none rounded-none  data-[state=active]:bg-transparent h-fit data-[state=active]:shadow-none! data-[state=active]:text-4xl">
                         Вход
                     </TabsTrigger>
                     <TabsTrigger
                         value="register"
-                        className="text-2xl data-[state=active]:border-b-primary! px-1 pb-2 after:hidden flex-none rounded-none  data-[state=active]:bg-transparent h-fit data-[state=active]:shadow-none! data-[state=active]:text-4xl">
+                        className="text-2xl data-[state=active]:border-b-primary! data-[state=active]:text-black px-1 pb-2 after:hidden flex-none rounded-none  data-[state=active]:bg-transparent h-fit data-[state=active]:shadow-none! data-[state=active]:text-4xl">
                         Регистрация
                     </TabsTrigger>
                 </TabsList>

@@ -14,12 +14,10 @@ export function useRegisterForm() {
             lastName: "",
             email: "",
             password: "",
-            passwordConfirm: "", // Обязательно добавьте это поле!
+            passwordConfirm: "",
         },
         mapData: (data) => {
-            console.log("Отправляемые данные:", data);
             const { passwordConfirm, ...rest } = data;
-            console.log("Данные после mapData:", rest);
             return rest;
         },
     });

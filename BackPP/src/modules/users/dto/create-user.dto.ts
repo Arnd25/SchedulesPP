@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsEnum, IsString, MaxLength, MinLength } from 'class-validator';
-import { Role } from 'src/generated/prisma';
+import { Role } from '../../../generated/prisma';
 
 export class CreateUserDto {
   @IsEmail({}, { message: 'Введите корректный email' })
